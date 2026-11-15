@@ -2,7 +2,6 @@
 ### **Planetary Analog Discovery Engine for Mars & Moon Exploration**
 **NASA International Space Apps Challenge**  
 **Challenge Track:** *Identify Earth Locations that Analog Moon and Mars*  
-**Challenge Author:** Dr. Sid-Ahmed Boukabara (NASA Earth Science Division)
 
 ---
 
@@ -19,16 +18,16 @@
 
 Field testing rovers, drilling rigs, extravehicular suits, and In-Situ Resource Utilization (ISRU) processing plants on Earth is an essential, multi-million-dollar milestone before any planetary launch. Traditionally, planetary scientists and mission architects have relied on a tiny, repetitive set of 3 to 4 textbook analog sites (e.g., Atacama, Hawaii, Devon Island). 
 
-Furthermore, existing tools frequently produce **fictional 99% match percentages**, rely on flat coordinate pins, evaluate entire planetary bodies as monolithic averages, and completely ignore where the analogy breaks down physically.
+Furthermore, existing tools frequently produce **ideal 99% match percentages**, rely on flat coordinate pins, evaluate entire planetary bodies as monolithic averages, completely ignore where the analogy breaks down physically.
 
 **GeoTwin-X** solves this challenge through an end-to-end aerospace software platform. It enables mission architects to:
 1. Select target sectors across **10 Mars regions and 10 Moon Artemis regions**, divided into **43 geological sub-parts** with authentic bounding boxes and NASA PDS datasets.
-2. Dynamically search a global continental database of **24 Earth geological provinces** spanning **200 contiguous $10\text{km} \times 10\text{km}$ grid sectors ($20,000 \text{ km}^2$)** across all **7 Continents and 7 Planetary Biomes**.
-3. Discover **both canonical benchmarks (33%) and uncataloged novel discoveries (67%)**—such as the Lonar basalt impact crater in India, Undara subterranean lava tubes in Australia, Danakil hyper-acidic springs in Ethiopia, and Qaidam sulfate yardangs on the Tibetan Plateau.
+2. Dynamically search a global continental database of **24 Earth geological provinces** spanning **200 contiguous 10km x 10km grid sectors - 20,000 km^2** across all **7 Continents and 7 Planetary Biomes**.
+3. Discover **both canonical benchmarks (32%) and uncataloged novel discoveries (68%)**—such as the Lonar basalt impact crater in India, Undara subterranean lava tubes in Australia, Danakil hyper-acidic springs in Ethiopia, and Qaidam sulfate yardangs on the Tibetan Plateau.
 4. Execute **mathematically rigorous multi-objective cosine similarity matching** using scikit-learn across 10-dimensional standardized feature vectors extracted from authentic Digital Elevation Models (DEMs).
-5. Inspect target vs. Earth terrains in **dual synchronized 3D WebGL viewports** with 1:1 camera orbiting and **dynamic $3\times3$ hectare cluster analysis**.
+5. Inspect target vs. Earth terrains in **dual synchronized 3D WebGL viewports** with 1:1 camera orbiting and **dynamic 3x3 hectare cluster analysis**.
 6. Quantify physical deviations via the **NASA Analogy Validity & Breakdown Boundary Matrix** (gravity normal force deltas, atmospheric density deficits, rotor speed scaling, thermal swings) and plan real-world deployment through an **Expedition Logistics Framework**.
-7. Export an official, printable **NASA Mission Planning Dossier** in one click.
+7. Export an official, printable **NASA Mission Planning Dossier**, basically a everything in one PDF in one click.
 
 ---
 
@@ -45,12 +44,12 @@ Furthermore, existing tools frequently produce **fictional 99% match percentages
   • NASA MRO CTX, HiRISE, MGS MOLA, LRO LOLA     • Copernicus COP-30, SRTM, USGS 3DEP, ISRO Cartosat
                │                                                      │
                ▼                                                      ▼
-  ┌─────────────────────────────┐                        ┌───────────────────────────────────────────┐
+  ┌─────────────────────────────┐                     ┌───────────────────────────────────────────┐
   │ DYNAMIC RASTER SLICING      │                        │ PRE-COMPUTED GLOBAL VECTOR GRID INDEX     │
   │ • Jezero CTX DEM 20m GeoTIFF│                        │ • earth_global_grid_index.json (3.9 MB)   │
   │ • Coordinate Auto-Clamping  │                        │ • 200 x 10D Feature Vectors               │
   │ • 3x3 Sub-Hectare Slicing   │                        │ • 200 x 28x28 3D Elevation Meshes         │
-  └──────────────┬──────────────┘                        └─────────────────────┬─────────────────────┘
+  └──────────────┬──────────────┘                                                                  └─────────────────────┬─────────────────────┘
                  │                                                             │
                  └──────────────────────────────┬──────────────────────────────┘
                                                 │
@@ -91,19 +90,19 @@ Furthermore, existing tools frequently produce **fictional 99% match percentages
 
 ## 🛠️ Core Engineering Rules & Data Philosophy
 
-1. **ZERO SYNTHETIC DATA:** Absolutely no fictional match scores, static percentages, or fabricated coordinates. All match metrics are derived strictly through linear algebra and scikit-learn cosine similarity over authentic topographic rasters.
+1. **ZERO SYNTHETIC DATA:** No fictional match scores, static percentages, or fabricated coordinates. All match metrics are derived strictly through linear algebra and scikit-learn cosine similarity over authentic topographic rasters.
 2. **GOOGLE COLAB OFF-LOADING & LOCAL RUNTIME EFFICIENCY:** Heavy raw raster data ingestion, slicing, and feature extraction are handled through an automated pipeline that compiles a lightweight pre-computed vector database (`earth_global_grid_index.json`, ~3.9 MB). This enables instant search across 20,000 sq km of global Earth landmass in **<0.001 seconds** without freezing local hardware or crashing browser memory.
 3. **RESILIENT & CRASH-PROOF ARCHITECTURE:** The platform incorporates smart coordinate auto-clamping, ensuring that out-of-bounds user coordinates or irregular bounding boxes are bounded to valid terrain datums without disconnecting the server or UI.
 4. **SCIENTIFIC INTEGRITY:** In accordance with Dr. Sid-Ahmed Boukabara's challenge directive, the tool explicitly identifies **where the Earth analogy fails** (gravitational traction deficits, rotorcraft atmospheric thinning, biogenic contamination) and prescribes actionable engineering testing mitigations.
 
 ---
 
-## 🌟 Feature Breakdown (A to Z, Priority-Ordered)
+## 🌟 Feature Breakdown ( Priority-Ordered)
 
 ### Feature 1: Hierarchical Off-World Target System (10 Mars + 10 Moon Regions)
-* **Priority:** Highest (Core Discovery Target)
+* **Core Discovery Target**
 * **Impact:** Eliminates arbitrary planetary coordinates. Enables rover exploration architects to test specific mission destinations rather than monolithic planetary estimates.
-* **Dataset Used:** NASA MRO CTX DEM (20m/px), HiRISE Stereo DEMs (1m/px), MGS MOLA global elevation, LRO LOLA polar altimetry, and Moon Mineralogy Mapper ($M^3$).
+* **Dataset Used:** NASA MRO CTX DEM (20m/px), HiRISE Stereo DEMs (1m/px), MGS MOLA global elevation, LRO LOLA polar altimetry, and Moon Mineralogy Mapper.
 * **Scientific Logic:** Planetary features vary drastically within a 50km radius. GeoTwin-X organizes targets hierarchically:
   * **Mars (10 Regions, 22 Sub-Parts):**
     1. *Jezero Crater:* Delta Scarp, Delta Front Topset, Neretva Vallis breach, Carbonate floor graben.
@@ -131,22 +130,22 @@ Furthermore, existing tools frequently produce **fictional 99% match percentages
 ---
 
 ### Feature 2: Multi-Continental Earth Analog Database (24 Provinces, 200 Contiguous Sectors)
-* **Priority:** Highest (Terrestrial Discovery Scope)
-* **Impact:** Expands the search horizon across **$20,000 \text{ km}^2$** of Earth landmass across all **7 Continents and 7 Biomes**, directly resolving the limitation of small, handpicked point sets.
+* **Terrestrial Discovery Scope**
+* **Impact:** Expands the search horizon across **20,000 km^2** of Earth landmass across all **7 Continents and 7 Biomes**, directly resolving the limitation of small, handpicked point sets.
 * **Dataset Used:** Copernicus COP-30 GLO DEM (30m), NASA SRTM (30m), USGS 3DEP (10m), ISRO Cartosat DEM (30m), IGN Spain LiDAR (5m), Norwegian Polar Institute DEM (5m), and REMA 8m Antarctica.
-* **Scientific Logic:** The Earth is partitioned into 200 contiguous $10\text{km} \times 10\text{km}$ grid sectors across 24 provinces (6 to 10 contiguous parts per province):
-  * **Novel Discoveries (134 Tiles / 67%):**
+* **Scientific Logic:** The Earth is partitioned into 200 contiguous 10km x 10km grid sectors across 24 provinces (6 to 10 contiguous parts per province):
+  * **Novel Discoveries (134 Tiles / 68%):**
     * *Lonar Crater (India):* Hyper-velocity impact crater hosted entirely in Deccan Traps flood basalt (Jezero basalt target rock analog).
     * *Undara Lava Tubes (Australia):* 160-km subterranean basalt conduit with collapsed skylights (Lunar pit cave analog).
     * *Qaidam Basin (Tibet/China):* High-altitude yardang ridges in lacustrine claystones interbedded with epsomite magnesium-sulfate salts.
     * *Danakil Depression & Dallol (Ethiopia):* Hyper-acidic (pH ~0), iron-saturated boiling brine springs (early Mars hydrothermal analog).
     * *Altiplano-Puna (Bolivia):* Extreme UV, low atmospheric pressure (60% sea level), ignimbrite sheets, and borate playas.
     * *Richat Structure (Mauritania):* Concentric ring dikes and alkaline magma dome (lunar multi-ring basin analog).
-    * *Makgadikgadi Salt Pans (Botswana):* $16,000\text{ km}^2$ halite/silcrete super-playa (Martian paleolake bed analog).
+    * *Makgadikgadi Salt Pans (Botswana):* 16,000 km^2 halite/silcrete super-playa (Martian paleolake bed analog).
     * *Craters of the Moon (USA):* Holocene fissure basalt flows, spatter cones, and lava tubes.
     * *Svalbard Pingos (Norway):* High-Arctic cryogenic brine pingos erupting through basaltic permafrost.
     * *Bardenas Reales (Spain):* Tabular sandstone mesas and gypsum badlands (Gale Crater Mount Sharp analog).
-  * **Canonical Benchmarks (66 Tiles / 33%):**
+  * **Canonical Benchmarks (66 Tiles / 32%):**
     * *Hanksville MDRS (USA):* Inverted delta paleochannels (Jezero western delta analog).
     * *Atacama Yungay (Chile):* Hyper-arid perchlorate-rich regolith plain (Viking & Curiosity soil analog).
     * *Askja Caldera (Iceland):* Historic Apollo astronaut basalt caldera training site.
@@ -160,7 +159,7 @@ Furthermore, existing tools frequently produce **fictional 99% match percentages
 * **Priority:** Critical (Scientific Core)
 * **Impact:** Provides an authentic, mathematically sound vector distance ranking between off-world targets and Earth analog sectors without black-box approximations.
 * **Dataset Used:** Standardized 10-dimensional feature arrays extracted from real DEM heightmaps.
-* **Scientific Logic:** For target vector $\vec{u}$ and candidate vector $\vec{v}$:
+* **Scientific Logic:** For target vector $\vec{u}$ and candidate vector vec{v}:
   $$\text{Cosine Similarity}(\vec{u}, \vec{v}) = \frac{\sum_{i=1}^{10} w_i u_i \cdot w_i v_i}{\sqrt{\sum_{i=1}^{10} (w_i u_i)^2} \sqrt{\sum_{i=1}^{10} (w_i v_i)^2}}$$
   $$\text{Cosine Distance} = 1.0 - \text{Cosine Similarity}$$
   Where $\vec{w}$ represents mode-specific objective weight vectors across three operational profiles:
