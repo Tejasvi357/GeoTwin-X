@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GeoTwin-X // Planetary Analog Search Engine (NASA Space Apps)</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons for HUD -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="aerospace-theme">
+
+  <!-- TOP AEROSPACE HUD HEADER -->
+  <header class="hud-header">
+    <div class="header-branding">
+      <div class="logo-mark">
+        <i class="fa-solid fa-satellite-dish pulse-icon"></i>
+      </div>
+      <div class="title-cluster">
+        <h1>GeoTwin-X <span class="version-tag">v2.0-NASA</span></h1>
+        <p class="subtitle">PLANETARY ANALOG DISCOVERY ENGINE // NASA SPACE APPS CHALLENGE</p>
+      </div>
+    </div>
+
+    <!-- Live Telemetry Ticker -->
+    <div class="hud-telemetry">
+      <div class="telemetry-item">
+        <span class="tele-label">SYSTEM STATUS</span>
+        <span class="tele-val status-online"><i class="fa-solid fa-circle"></i> NASA PDS LIVE</span>
+      </div>
+      <div class="telemetry-item">
+        <span class="tele-label">TARGET BODY</span>
+        <span class="tele-val text-amber" id="hudTargetBody">MARS (MOLA/CTX)</span>
+      </div>
+      <div class="telemetry-item">
+        <span class="tele-label">ACTIVE SUB-PART</span>
+        <span class="tele-val text-cyan" id="hudSubPartName">Part A: Delta Scarp</span>
+      </div>
+      <div class="telemetry-item">
+        <span class="tele-label">EARTH DISCOVERIES</span>
+        <span class="tele-val text-cyan" id="hudDbCount">24 REGIONS // 200 PARTS (6-10 PARTS/REGION)</span>
+      </div>
+    </div>
+
+    <!-- Global Controls -->
+    <div class="header-actions">
+      <button id="btnSyncToggle" class="btn btn-hud active" title="Toggle Synchronized Camera Control">
+        <i class="fa-solid fa-link"></i> <span id="syncText">SYNC CAMERAS: ON</span>
+      </button>
+      <button id="btnResetViews" class="btn btn-hud" title="Reset 3D Camera Angles">
+        <i class="fa-solid fa-arrows-rotate"></i> RESET VIEW
+      </button>
+      <button id="btnWireframeToggle" class="btn btn-hud" title="Toggle Wireframe Topography">
+        <i class="fa-solid fa-network-wired"></i> WIREFRAME
+      </button>
+      <button id="btnOpenDossier" class="btn btn-hud btn-accent">
+        <i class="fa-solid fa-file-pdf"></i> EXPORT PDF DOSSIER
+      </button>
+    </div>
+  </header>
+
+  <!-- HIERARCHICAL MISSION PLANNER TOOLBAR (10 MARS + 10 MOON REGIONS WITH SUB-PARTS) -->
+  <nav class="mission-toolbar">
+    
+    <!-- Level 1: Body Switcher -->
+    <div class="toolbar-section">
+      <label><i class="fa-solid fa-globe"></i> PLANET/BODY:</label>
+      <div class="body-toggle-group">
+        <button id="btnBodyMars" class="btn-toggle active" data-body="mars">
+          <i class="fa-solid fa-circle text-amber"></i> MARS (10 REGIONS)
+        </button>
+        <button id="btnBodyMoon" class="btn-toggle" data-body="moon">
+          <i class="fa-solid fa-moon text-cyan"></i> MOON (10 REGIONS)
+        </button>
+      </div>
+    </div>
+
+    <!-- Level 2: Master Region Selector (10 per body) -->
+    <div class="toolbar-section">
+      <label for="selectRegion"><i class="fa-solid fa-map"></i> REGION:</label>
+      <select id="selectRegion" class="hud-select">
+        <!-- Dynamically populated -->
+      </select>
+    </div>
+
+    <!-- Level 3: Geological Sub-Part Selector -->
+    <div class="toolbar-section">
+      <label for="selectSubPart"><i class="fa-solid fa-layer-group"></i> SUB-PART:</label>
+      <select id="selectSubPart" class="hud-select-accent">
+        <!-- Dynamically populated -->
+      </select>
+    </div>
+
+    <!-- Level 4: Global Continent Filter -->
+    <div class="toolbar-section">
+      <label for="selectContinent"><i class="fa-solid fa-earth-americas"></i> CONTINENT:</label>
+      <select id="selectContinent" class="hud-select">
+        <option value="all">GLOBAL (7 CONTINENTS)</option>
+        <option value="Asia">Asia</option>
+        <option value="Africa">Africa</option>
+        <option value="North America">North America</option>
+        <option value="South America">South America</option>
+        <option value="Australia">Australia</option>
+        <option value="Europe">Europe</option>
+        <option value="Antarctica">Antarctica</option>
+        <option value="Polar / High Arctic">Polar / Arctic</option>
+      </select>
+    </div>
+
+    <!-- Level 5: Terrain Biome Filter -->
+    <div class="toolbar-section">
+      <label for="selectBiome"><i class="fa-solid fa-mountain-sun"></i> TERRAIN BIOME:</label>
+      <select id="selectBiome" class="hud-select">
+        <option value="all">ALL BIOMES (UNIVERSAL)</option>
+        <option value="Basalt & Volcanic Calderas">Basalt & Volcanic</option>
+        <option value="Deserts & Sand Dunes">Deserts & Sand Dunes</option>
+        <option value="Endorheic Salt Playas">Endorheic Salt Playas</option>
+        <option value="Fluvial Terraces & Badlands">Fluvial Terraces</option>
+        <option value="Impact Craters">Impact Craters</option>
+        <option value="Polar & Cryogenic Permafrost">Polar Permafrost</option>
+        <option value="Subterranean Lava Tubes & Caves">Lava Tubes & Caves</option>
+      </select>
+    </div>
+
+    <!-- Discovery Tier Filter (All vs Novel Discoveries vs Canonical) -->
+    <div class="toolbar-section">
+      <label><i class="fa-solid fa-filter"></i> EARTH DISCOVERY TIER:</label>
+      <div class="tier-filter-group">
+        <button class="btn-tier-filter active" data-tier="all">ALL SITES</button>
+        <button class="btn-tier-filter btn-tier-novel" data-tier="novel" title="Previously Uncataloged Planetary Analogs">
+          🌟 NOVEL DISCOVERIES
+        </button>
+        <button class="btn-tier-filter btn-tier-bench" data-tier="benchmark" title="Standard Textbook Benchmarks">
+          📘 BENCHMARKS
+        </button>
+      </div>
+    </div>
+
+    <!-- Multi-Objective Operational Modes -->
+    <div class="objective-tabs">
+      <button class="tab-btn active" data-mode="mobility">
+        <i class="fa-solid fa-truck-monster"></i>
+        <span>MOBILITY & TRAVERSABILITY</span>
+      </button>
+      <button class="tab-btn" data-mode="isru">
+        <i class="fa-solid fa-gem"></i>
+        <span>ISRU & MINERALOGY</span>
+      </button>
+      <button class="tab-btn" data-mode="regional">
+        <i class="fa-solid fa-map-location-dot"></i>
+        <span>REGIONAL CONTEXT</span>
+      </button>
+    </div>
+
+  </nav>
+
+  <!-- SUB-BAR: COORDINATES, BOUNDING BOX & NASA DATASET CITATION -->
+  <div class="telemetry-subbar">
+    <div class="subbar-item">
+      <span class="label">TARGET CENTER:</span>
+      <strong id="barCoords" class="text-cyan">18.4447°N, 77.4508°E</strong>
+    </div>
+    <div class="subbar-item">
+      <span class="label">BOUNDING BOX:</span>
+      <code id="barBounds">[77.41, 18.41, 77.49, 18.48]</code>
+    </div>
+    <div class="subbar-item">
+      <span class="label">NASA PDS DATASET:</span>
+      <span id="barDataset" class="text-dim">NASA MRO CTX / HiRISE Stereo DEM / MGS MOLA</span>
+    </div>
+    <div class="subbar-item">
+      <span class="label">ISRU POTENTIAL:</span>
+      <span id="barIsru" class="text-green">High (phyllosilicate clays)</span>
+    </div>
+  </div>
+
+  <!-- MAIN DUAL 3D VIEWPORT CONTAINER -->
+  <main class="dual-viewport-container">
+    
+    <!-- LEFT 3D VIEWPORT: MARS / MOON CELESTIAL TARGET -->
+    <div class="viewport-card" id="cardTargetViewport">
+      <div class="viewport-header">
+        <div class="viewport-title">
+          <span class="badge badge-target" id="targetBadge">OFF-WORLD TARGET</span>
+          <h2 id="targetDisplayTitle">Jezero Crater - Western Delta (Mars)</h2>
+        </div>
+        <div class="viewport-meta">
+          <span class="meta-tag" id="targetDatasetTag"><i class="fa-solid fa-satellite"></i> NASA CTX DEM 20m</span>
+          <span class="meta-tag" id="targetElevRange">ELEV: -2580m to -2450m</span>
+        </div>
+      </div>
+
+      <!-- 3D Canvas Container -->
+      <div class="canvas-wrapper" id="targetCanvasContainer">
+        <!-- Three.js Canvas injected here -->
+        <div class="viewport-hud-overlay left-hud">
+          <div class="hud-line"><strong>SUB-PART:</strong> <span id="targetPartDisplay" class="text-amber">Part A: Delta Scarp</span></div>
+          <div class="hud-line"><strong>MEAN SLOPE:</strong> <span id="targetSlopeVal">--</span></div>
+          <div class="hud-line"><strong>TRI ROUGHNESS:</strong> <span id="targetTriVal">--</span></div>
+          <div class="hud-line"><strong>WHEEL SLIP HAZARD (>15°):</strong> <span id="targetHazardVal" class="text-amber">--</span></div>
+        </div>
+        <div class="camera-indicator"><i class="fa-solid fa-video"></i> CAM: TARGET-ORBIT-1</div>
+      </div>
+    </div>
+
+    <!-- SYNC LOCK CONNECTOR BADGE -->
+    <div class="viewport-sync-indicator" id="syncStatusIndicator">
+      <div class="sync-line"></div>
+      <div class="sync-badge">
+        <i class="fa-solid fa-link"></i>
+        <span>1:1 SCALE SYNC</span>
+      </div>
+      <div class="sync-line"></div>
+    </div>
+
+    <!-- RIGHT 3D VIEWPORT: TOP EARTH PLANETARY ANALOG -->
+    <div class="viewport-card" id="cardEarthViewport">
+      <div class="viewport-header">
+        <div class="viewport-title">
+          <span class="badge badge-earth" id="earthTierBadge">EARTH ANALOG MATCH</span>
+          <h2 id="earthDisplayTitle">Loading top analog...</h2>
+        </div>
+        <div class="viewport-meta">
+          <span class="badge badge-match" id="earthMatchScoreBadge">MATCH: --%</span>
+          <span class="meta-tag" id="earthLocationTag">--</span>
+        </div>
+      </div>
+
+      <!-- 3D Canvas Container -->
+      <div class="canvas-wrapper" id="earthCanvasContainer">
+        <!-- Three.js Canvas injected here -->
+        <div class="viewport-hud-overlay right-hud">
+          <div class="hud-line"><strong>DISCOVERY STATUS:</strong> <span id="earthTierDisplay" class="text-cyan">🌟 NOVEL DISCOVERY</span></div>
+          <div class="hud-line"><strong>COSINE DIST:</strong> <span id="earthCosineDistVal" class="text-cyan">--</span></div>
+          <div class="hud-line"><strong>ANALOG CLASS:</strong> <span id="earthCategoryVal">--</span></div>
+          <div class="hud-line"><strong>NASA SOURCE:</strong> <span id="earthSourceVal">NASA SRTM 30m</span></div>
+        </div>
+        <div class="camera-indicator"><i class="fa-solid fa-video"></i> CAM: EARTH-ORBIT-1</div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- LOWER OPERATIONS CONTROL MATRIX -->
+  <section class="operations-grid">
+
+    <!-- PANEL 1: MULTI-OBJECTIVE RANKED ANALOGS LIST (WITH NOVEL/BENCHMARK BADGES & EXPEDITION LOGISTICS) -->
+    <div class="ops-panel candidates-panel">
+      <div class="panel-header">
+        <h3><i class="fa-solid fa-list-ol"></i> RANKED EARTH ANALOG DISCOVERIES</h3>
+        <span class="panel-subtitle" id="activeModeLabel">24 REGIONS (200 TOTAL PARTS) // MODE: MOBILITY & TRAVERSABILITY</span>
+      </div>
+      <div class="candidates-list" id="candidatesListContainer">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+
+    <!-- PANEL 2: DYNAMIC 3x3 HECTARE CLUSTER NAVIGATOR -->
+    <div class="ops-panel cluster-panel">
+      <div class="panel-header">
+        <h3><i class="fa-solid fa-border-all"></i> DYNAMIC 3x3 HECTARE CLUSTERS</h3>
+        <span class="panel-subtitle">PRIMARY LANDING TILE + 8 NEIGHBORS</span>
+      </div>
+      <div class="cluster-body">
+        <div class="cluster-grid-matrix" id="clusterMatrixContainer">
+          <!-- 3x3 sectors: NW, N, NE, W, Center, E, SW, S, SE -->
+        </div>
+        <div class="sector-telemetry-card" id="sectorTelemetryCard">
+          <h4><i class="fa-solid fa-crosshairs"></i> SELECTED SECTOR: <span id="sectorCodeDisplay" class="text-cyan">CENTER</span></h4>
+          <div class="sector-metrics-grid">
+            <div class="s-metric">
+              <span class="label">ELEVATION:</span>
+              <span class="val" id="sElevVal">--</span>
+            </div>
+            <div class="s-metric">
+              <span class="label">SLOPE:</span>
+              <span class="val" id="sSlopeVal">--</span>
+            </div>
+            <div class="s-metric">
+              <span class="label">TRI ROUGHNESS:</span>
+              <span class="val" id="sTriVal">--</span>
+            </div>
+            <div class="s-metric">
+              <span class="label">TRAFFICABILITY:</span>
+              <span class="val text-green" id="sTrafficVal">--</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Expedition Logistics Quick Card -->
+        <div class="logistics-quick-card" id="logisticsQuickCard">
+          <h4><i class="fa-solid fa-plane-departure"></i> EXPEDITION LOGISTICS & SITE ACCESS</h4>
+          <div class="logistics-row">
+            <i class="fa-solid fa-plane"></i> <span id="logAirfield">Loading airfield...</span>
+          </div>
+          <div class="logistics-row">
+            <i class="fa-solid fa-truck"></i> <span id="logRoad">Loading road access...</span>
+          </div>
+          <div class="logistics-row">
+            <i class="fa-solid fa-tower-cell"></i> <span id="logComms">Loading comms...</span>
+          </div>
+          <div class="logistics-row">
+            <i class="fa-solid fa-calendar-check text-green"></i> <strong id="logSeason">Best Season: --</strong>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PANEL 3: BOUNDARY CONDITION DISCREPANCY & THE OFFICIAL NASA CHALLENGE BREAKDOWN SCORECARD -->
+    <div class="ops-panel physics-panel">
+      <div class="panel-header">
+        <h3><i class="fa-solid fa-atom"></i> ANALOGY VALIDITY & BREAKDOWN SCORECARD</h3>
+        <span class="panel-subtitle">WHERE ANALOGY WORKS VS BREAKS DOWN</span>
+      </div>
+      <div class="physics-body" id="physicsBodyContainer">
+        
+        <!-- Physical Constants Deltas -->
+        <div class="physics-deltas-grid">
+          <div class="physics-card">
+            <div class="p-card-header"><i class="fa-solid fa-weight-hanging"></i> <span>GRAVITY DELTA</span></div>
+            <div class="p-card-vals">
+              <div class="p-row"><span>Target:</span> <strong id="pTargetGrav" class="text-amber">--</strong></div>
+              <div class="p-row"><span>Earth:</span> <strong id="pEarthGrav">9.81 m/s²</strong></div>
+              <div class="p-row highlight"><span>Traction Loss:</span> <strong id="pTractionRatio" class="text-red">--</strong></div>
+              <div class="p-row"><span>Req. Ballast:</span> <strong id="pBallastMass" class="text-cyan">--</strong></div>
+            </div>
+          </div>
+
+          <div class="physics-card">
+            <div class="p-card-header"><i class="fa-solid fa-wind"></i> <span>ATMOSPHERE</span></div>
+            <div class="p-card-vals">
+              <div class="p-row"><span>Pressure:</span> <strong id="pTargetPress" class="text-amber">--</strong></div>
+              <div class="p-row"><span>Density:</span> <strong id="pDensityRatio" class="text-red">--</strong></div>
+              <div class="p-row highlight"><span>Rotor Scale:</span> <strong id="pRotorScale" class="text-cyan">--</strong></div>
+            </div>
+          </div>
+
+          <div class="physics-card">
+            <div class="p-card-header"><i class="fa-solid fa-sun"></i> <span>SOLAR / THERMAL</span></div>
+            <div class="p-card-vals">
+              <div class="p-row"><span>Solar Flux:</span> <strong id="pSolarRatio" class="text-amber">--</strong></div>
+              <div class="p-row"><span>Thermal ΔT:</span> <strong id="pThermalSwing" class="text-red">--</strong></div>
+              <div class="p-row highlight"><span>Stress Index:</span> <strong id="pStressIndex" class="text-cyan">--</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- The NASA Challenge Analogy Validity & Breakdown Table -->
+        <div class="breakdown-table-container">
+          <h4><i class="fa-solid fa-scale-balanced"></i> NASA SCIENTIFIC BREAKDOWN MATRIX</h4>
+          <div id="breakdownCardsContainer" class="breakdown-cards-list">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+
+  <!-- MULTI-PAGE PRINTABLE / DOWNLOADABLE PDF MISSION DOSSIER MODAL -->
+  <div class="modal-backdrop" id="dossierModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fa-solid fa-file-pdf"></i>
+          <h3>NASA SPACE APPS // MISSION ANALOG PLANNING DOSSIER</h3>
+        </div>
+        <button class="btn-close" id="btnCloseDossier">&times;</button>
+      </div>
+      <div class="modal-body printable-dossier" id="dossierContent">
+        <!-- Rendered formatted report -->
+      </div>
+      <div class="modal-footer">
+        <button id="btnDownloadJson" class="btn btn-hud">
+          <i class="fa-solid fa-download"></i> DOWNLOAD JSON DATA
+        </button>
+        <button id="btnPrintDossier" class="btn btn-primary">
+          <i class="fa-solid fa-print"></i> PRINT / SAVE PDF DOSSIER
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>
