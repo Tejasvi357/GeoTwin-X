@@ -1,4 +1,4 @@
-# 🪐 GeoTwin-X (v2.0-NASA)
+# GeoTwin-X 
 ### **Planetary Analog Discovery Engine for Mars & Moon Exploration**
 **NASA International Space Apps Challenge**  
 **Challenge Track:** *Identify Earth Locations that Analog Moon and Mars*  
